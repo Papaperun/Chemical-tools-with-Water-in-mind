@@ -1,0 +1,105 @@
+import pandas as pd
+from datetime import datetime
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+
+# Prices per foot for each chemical
+chemical_prices = {
+    'Chemical X': 25,
+    'Chemical Y': 35,
+    'Chemical Z': 45
+}
+
+data = []
+
+# Ask for lead time, safely
+while True:
+    try:
+        lead_time_days = int(input("How many days in advance do you need to order? "))
+        break
+    except ValueError:
+        print("Please enter a valid number (whole days).")
+
+# Loop through each chemical
+for chem, price in chemical_prices.items():
+    print(f"\n--- {chem} ---")
+
+    # Try-except block for tank level, daily use, max level
+    try:
+        Chem_Tank_level = float(input(f"Current tank level for {chem} (in feet): "))
+        Daily_use = float(input(f"Daily usage for {chem} (in feet): "))
+        if Daily_use == 0:
+            print("Daily usage cannot be zero. Skipping this chemical.")
+            continue
+        Max_level = float(input(f"Maximum tank level for {chem} (in feet): "))
+    except ValueError:
+        print("Invalid number entered. Skipping this chemical.")
+        continue
+
+    Days_left = Chem_Tank_level / Daily_use
+
+    if Days_left > lead_time_days:
+        print(f"{chem} is okay. Estimated days left: {Days_left:.1f}")
+        need_order = False
+        order_amount = 0
+        order_cost = 0
+    else:
+        print(f"{chem} needs ordering! Days left: {Days_left:.1f}")
+        need_order = True
+        order_amount = Max_level - Chem_Tank_level
+        order_cost = order_amount * price
+
+    data.append({
+        'Chemical': chem,
+        'Tank Level (ft)': Chem_Tank_level,
+        'Daily Use (ft)': Daily_use,
+        'Days Left': round(Days_left, 2),
+        'Needs Order': need_order,
+        'Order Amount (ft)': round(order_amount, 2),
+        'Price per ft ($)': price,
+        'Total Cost ($)': round(order_cost, 2)
+    })
+
+# Create a DataFrame
+df = pd.DataFrame(data)
+
+# Show summary
+print("\nSummary:")
+print(df)
+
+# Filter only chemicals that need to be ordered
+df_order = df[df['Needs Order']]
+
+# Save as Excel PO
+today = datetime.today().strftime('%Y-%m-%d')
+if not df_order.empty:
+    excel_file = f"Chemical_PO_{today}.xlsx"
+    pdf_file = f"Chemical_PO_{today}.pdf"
+
+    try:
+        df_order.to_excel(excel_file, index=False)
+        print(f"\nExcel PO saved as '{excel_file}'")
+    except Exception as e:
+        print(f"Could not save Excel file: {e}")
+
+    try:
+        c = canvas.Canvas(pdf_file, pagesize=letter)
+        width, height = letter
+
+        c.setFont("Helvetica-Bold", 16)
+        c.drawString(200, height - 50, "Chemical Purchase Order")
+
+        c.setFont("Helvetica", 12)
+        c.drawString(50, height - 80, f"Date: {today}")
+
+        y = height - 120
+        for index, row in df_order.iterrows():
+            c.drawString(50, y, f"{row['Chemical']}: Order {row['Order Amount (ft)']} ft @ ${row['Price per ft ($)']} = ${row['Total Cost ($)']}")
+            y -= 20
+
+        c.save()
+        print(f"PDF PO saved as '{pdf_file}'")
+    except Exception as e:
+        print(f"Could not save PDF file: {e}")
+else:
+    print("\nNo purchase orders needed today.")
