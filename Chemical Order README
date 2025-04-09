@@ -1,0 +1,83 @@
+🧪 Chemical Purchase Order Script
+This Python script helps automate chemical inventory tracking and generate simple purchase orders (POs) in Excel and PDF formats.
+
+It prompts the user for daily usage, current tank levels, and maximum tank capacities of a few chemicals. Based on a user-defined lead time, it determines whether a chemical needs to be reordered and creates a PO for those that do.
+
+📦 Features
+Tracks chemical usage and estimates days left until tanks are empty.
+
+Alerts when chemicals need reordering based on lead time.
+
+Automatically generates:
+
+A purchase order in .xlsx format (Excel)
+
+A summary report in .pdf format
+
+Simple structure for easy customization and expansion.
+
+🚀 Getting Started
+Prerequisites
+You’ll need Python installed, along with the following libraries:
+
+bash
+Copy
+Edit
+pip install pandas reportlab openpyxl
+🧠 reportlab is used to generate PDF files, and openpyxl is used when saving Excel files.
+
+📋 How to Use
+Run the script:
+
+bash
+Copy
+Edit
+python your_script_name.py
+You’ll be asked to:
+
+Enter your desired lead time in days (how far in advance you want to reorder).
+
+Enter tank level, daily use, and maximum level for each chemical.
+
+The script will:
+
+Calculate the number of days remaining before the chemical runs out.
+
+Generate a purchase order if the remaining days are less than or equal to your lead time.
+
+Save the PO in both Excel and PDF formats with today’s date in the filename.
+
+⚠️ Notes
+If no chemical usage is reported or no chemicals need ordering on a given day, no files will be generated. This is normal, especially in real-world operations where chemical use may vary or be zero some days.
+
+If daily usage is entered as 0, the script will skip that chemical to prevent division errors.
+
+All inputs are expected as feet and US dollars ($) — feel free to adapt this for your own units.
+
+🛠 Customization
+This script is kept simple on purpose so it can be tailored to other industries and uses:
+
+Chemical names and prices can be changed by editing the chemical_prices dictionary at the top of the script.
+
+Want to use liters, gallons, or other materials? Just change the unit labels and conversion factors as needed.
+
+The basic PDF layout can be upgraded with your company logo, address, vendor info, etc.
+
+You can add email integration or link this script to a dashboard if you want to scale it further.
+
+🔮 Future Improvements
+Planned upgrades for better usability:
+
+🖼 GUI Version: A graphical user interface using Tkinter, so it’s easier to use without typing into a console.
+
+💾 Save Tank Max Levels: Add a settings system (like a JSON or config file) to store maximum tank levels, avoiding the need to retype them every time. This will improve workflow and reduce user fatigue.
+
+📄 Example Output
+Example PO line in PDF:
+
+nginx
+Copy
+Edit
+Chemical X: Order 10.5 ft @ $25 = $262.5
+🧑‍💻 Author
+This tool was created to make daily operations easier, reduce guesswork, and speed up reordering decisions. Customize it, improve it, and make it work for you.
