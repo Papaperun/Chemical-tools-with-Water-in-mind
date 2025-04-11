@@ -1,0 +1,35 @@
+# 💧 All-in-One Cl2 Dosage Calculator
+
+This project is a command-line Python tool designed to help water treatment operators calculate chlorine (Cl2) dosage, demand, and adjustment needs in a fast, clean, and error-validated format.
+
+---
+
+## ⚙️ What It Does
+
+- ✅ Calculates current Cl2 dosage in lbs/day  
+- ✅ Calculates Cl2 demand (difference between dosage and residual)  
+- ✅ Calculates desired dosage to reach a target residual  
+- ✅ Provides adjustment recommendations  
+- ✅ Includes error handling and color-coded terminal output  
+
+---
+
+## 📌 Why I Built This
+
+As someone working in water treatment, I got tired of doing the same calculations over and over. So I automated them. This tool was written to be clear, operator-friendly, and fast to use in real situations — no fluff.
+
+This is part of a bigger vision: building a one-stop Python toolkit for operators in the field.
+
+---
+
+## 💻 How to Run
+
+1. Make sure Python is installed (Python 3.8+ recommended)
+2. Install dependencies:  
+   ```bash
+   pip install colorama
+
+---
+
+Let me know if you want to change the tone, add a gif demo, or plug your socials. Once i build the GUI version, i will update this to include screenshots and GUI install instructions too. Want me to help make a screenshot or animation of the CLI version?
+Under MIT 
