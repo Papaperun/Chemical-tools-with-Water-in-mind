@@ -1,0 +1,66 @@
+# All-in-One Cl2 Dosage Calculator
+
+# This script calculates:
+# 1. The current Cl2 dosage in lbs/day.
+# 2. The Cl2 demand (difference between dosage and residual).
+# 3. The desired dosage to achieve the desired residual.
+
+from colorama import Fore, Style, init
+
+# Initialize colorama for colored output
+init(autoreset=True)
+
+# Function to get valid float input from the user
+def get_float_input(prompt):
+    while True:
+        try:
+            return float(input(Fore.CYAN + prompt))
+        except ValueError:
+            print(Fore.RED + "Invalid input. Please enter a numeric value.")
+
+# Get user inputs for flow, dosage, current residual, and desired residual
+flow = get_float_input("Enter the flow in MGD (Million Gallons per Day): ")
+dosage = get_float_input("Enter the current dosage in mg/L: ")
+current_residual = get_float_input("Enter the current residual of total Cl2 in mg/L: ")
+desired_residual = get_float_input("Enter the desired residual in mg/L: ")
+
+# Calculates the current Cl2 dosage
+def Cl2_dosage():
+    cl2 = flow * dosage * 8.34
+    print(Fore.GREEN + f"\nYour current Cl2 dosage is: {cl2:.2f} lbs/day")
+    return cl2
+
+current_cl2_dosage = Cl2_dosage()
+
+# Calculates the current Cl2 demand
+def Cl2_demand():
+    demand = dosage - current_residual
+    print(Fore.YELLOW + f"Your Cl2 demand is: {demand:.2f} mg/L")
+    return demand
+
+demand = Cl2_demand()
+
+# Calculates the desired dosage to achieve the desired residual
+def desired_dosage():
+    desired_dosage = desired_residual + demand
+    print(Fore.BLUE + f"Your desired dosage to achieve the desired residual is: {desired_dosage:.2f} mg/L")
+    return desired_dosage
+
+desired_dosage_value = desired_dosage()
+
+
+# Calculates the difference in lbs/day for adjustment
+def dosage_adjustment():
+    desired_cl2_dosage = flow * desired_dosage_value * 8.34
+    difference = desired_cl2_dosage - current_cl2_dosage
+
+    if difference > 0:
+        print(Fore.MAGENTA + f"\nYou need an increase of {difference:.2f} lbs/day to reach the desired residual.")
+    elif difference < 0:
+        print(Fore.MAGENTA + f"\nYou need a reduction of {abs(difference):.2f} lbs/day to reach the desired residual.")
+    else:
+        print(Fore.MAGENTA + "\nNo adjustment needed. Your current dosage is already at the desired level.")
+
+    print(Fore.CYAN + f"Your desired Cl2 dosage in lbs/day is: {desired_cl2_dosage:.2f} lbs/day")
+
+dosage_adjustment()
