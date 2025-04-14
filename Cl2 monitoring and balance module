@@ -1,0 +1,92 @@
+# This is the Cl2 monitoring and balance module
+
+import random
+import matplotlib.pyplot as plt
+
+# Constants
+initial_plant_flow = random.uniform(1, 35)  # Initial random plant flow in MGD
+chemical_concentration = 100  # Chemical concentration in mg/L
+desired_cl2 = 4.5  # Desired Cl2 residual in mg/L
+
+# Data for visualization
+time_steps = []  # Time steps
+cl2_readings = []  # CL2 readings over time
+cl2_doses = []  # CL2 doses over time
+plant_flows = []  # Plant flows over time
+
+def get_cl2_reading():
+    # Generate a random CL2 reading
+    cl2_reading = round(random.uniform(0.0, 5.0), 2)  # Rounded for better readability
+    return cl2_reading
+
+def cl2_check_and_adjust(cl2_reading, plant_flow, time_step):
+    # Calculate demand
+    demand = desired_cl2 - cl2_reading  # Positive if too low, negative if too high
+
+    # Calculate the current Cl2 dose
+    current_cl2_dose = 8.34 * plant_flow * cl2_reading
+    cl2_doses.append(current_cl2_dose)  # Store the current dose for plotting
+    print(f"Time {time_step}: Current Plant Flow: {plant_flow:.2f} MGD")
+    print(f"Time {time_step}: Current Cl2 Dose: {current_cl2_dose:.2f} lbs/day")
+
+    if demand > 0:
+        print(f"Time {time_step}: CL2 is too low by {abs(demand):.2f} mg/L. Increasing dose.")
+    elif demand < 0:
+        print(f"Time {time_step}: CL2 is too high by {abs(demand):.2f} mg/L. Reducing dose.")
+    else:
+        print(f"Time {time_step}: CL2 is at the desired dose. No adjustments needed.")
+        cl2_readings.append(cl2_reading)  # Store the reading for plotting
+        return cl2_reading  # No adjustment needed
+
+    # Simulate the adjustment by updating the Cl2 reading
+    if demand > 0:
+        cl2_reading += min(abs(demand), 0.2)  # Simulate a small increase toward the target
+    elif demand < 0:
+        cl2_reading -= min(abs(demand), 0.2)  # Simulate a small decrease toward the target
+
+    # Ensure the Cl2 reading stays within realistic bounds
+    cl2_reading = max(0.0, min(5.0, cl2_reading))
+    cl2_readings.append(cl2_reading)  # Store the updated reading for plotting
+
+    return cl2_reading
+
+# Continuous monitoring loop
+cl2_reading = get_cl2_reading()  # Initial CL2 reading
+plant_flow = initial_plant_flow  # Initial plant flow
+print(f"Initial CL2 Reading: {cl2_reading} mg/L")
+print(f"Initial Plant Flow: {plant_flow:.2f} MGD")
+
+for time_step in range(1, 21):  # Simulate 20 time steps
+    time_steps.append(time_step)  # Store the time step for plotting
+    plant_flows.append(plant_flow)  # Store the plant flow for plotting
+    cl2_reading = cl2_check_and_adjust(cl2_reading, plant_flow, time_step)  # Adjust the Cl2 reading
+    print(f"Time {time_step}: Updated CL2 Reading: {cl2_reading:.2f} mg/L")
+
+    # Simulate gradual changes in plant flow
+    plant_flow += random.uniform(-0.5, 0.5)  # Small random fluctuation
+    plant_flow = max(1.0, min(35.0, plant_flow))  # Ensure flow stays within realistic bounds
+
+# Plot the results
+plt.figure(figsize=(12, 8))
+
+# Plot CL2 readings
+plt.plot(time_steps, cl2_readings, label="CL2 Reading (mg/L)", color="blue", marker="o")
+
+# Plot CL2 doses
+plt.plot(time_steps, cl2_doses, label="CL2 Dose (lbs/day)", color="green", linestyle="--")
+
+# Plot Plant Flow
+plt.plot(time_steps, plant_flows, label="Plant Flow (MGD)", color="orange", linestyle="-.")
+
+# Highlight desired CL2 level
+plt.axhline(desired_cl2, color="red", linestyle="--", label="Desired CL2 Level (mg/L)")
+
+# Add labels, title, and legend
+plt.title("Chlorine Residual, Dose, and Plant Flow Over Time", fontsize=16)
+plt.xlabel("Time Step", fontsize=12)
+plt.ylabel("Value", fontsize=12)
+plt.legend()
+plt.grid()
+
+# Show the plot
+plt.show()
